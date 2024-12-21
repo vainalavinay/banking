@@ -3,6 +3,7 @@ package com.capstone.banking.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import io.jsonwebtoken.Jwts;
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
@@ -18,13 +20,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtUtil {
 
-    private final SecretKey secretKey;
+    private SecretKey secretKey;
 
-    // Hardcoded secret key (consider storing it securely in a configuration file or environment variable)
-    private static final String SECRET = "secretsecretsecretsecretsecretsecret";
+    @Value("${jwt.secret}")
+    private String secretKeyProperty;
 
-    public JwtUtil() {
-        this.secretKey = Keys.hmacShaKeyFor(SECRET.getBytes());
+    // Initialize the secret key after the bean is created using @PostConstruct
+    @PostConstruct
+    public void init() {
+        // Check if the secret key property is provided and not empty
+        if (secretKeyProperty != null && !secretKeyProperty.isEmpty()) {
+            // Check the length of the secret key (for example, using 256-bit key)
+            if (secretKeyProperty.length() < 32) {
+                throw new IllegalArgumentException("JWT secret key must be at least 32 characters long!");
+            }
+            // Generate the SecretKey using the provided secret string
+            this.secretKey = Keys.hmacShaKeyFor(secretKeyProperty.getBytes());
+        } else {
+            throw new IllegalArgumentException("JWT secret key not provided in application.properties!");
+        }
     }
 
     // Updated generateToken method with additional claims and signature algorithm
@@ -93,7 +107,7 @@ public class JwtUtil {
         Map<String, Object> claims = extractAllClaims(token);
         claims.put("role", claims.get("role"));  // Optionally modify claims if needed
         
-        long expirationTime = 1000 * 60 * 60; // 1 hour
+        long expirationTime = 1000 * 3 * 60; // 1 hour
         Date expirationDate = new Date(System.currentTimeMillis() + expirationTime);
 
         return Jwts.builder()

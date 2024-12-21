@@ -33,15 +33,21 @@ public class SecurityConfig{
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf -> csrf.disable())
-//                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/register", "/auth/login").permitAll()
                         .requestMatchers("/admin/**", "/h2-console/**").hasRole("ADMIN")
-                        .requestMatchers("/user/**").hasRole("USER")
+                        .requestMatchers("/user/**", "/auth/account").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/").permitAll()
                         .anyRequest().authenticated())
-//                .formLogin(Customizer.withDefaults())
-//                .httpBasic(Customizer.withDefaults())
+                .formLogin(Customizer.withDefaults())
+                .httpBasic(Customizer.withDefaults())
+                .logout(logout -> logout
+                        .logoutUrl("/auth/logout") // Specify the logout URL
+                        .logoutSuccessUrl("/") // Redirect URL after successful logout
+                        .deleteCookies("JSESSIONID") // Deletes the session cookie
+                        .invalidateHttpSession(true) // Invalidates the session
+                        .clearAuthentication(true)) // Clears authentication context
                 .addFilterBefore(jwtRequestFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -51,7 +57,8 @@ public class SecurityConfig{
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
+    @SuppressWarnings("removal")
+	@Bean
     AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .userDetailsService(customDetailsService)

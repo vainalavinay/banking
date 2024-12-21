@@ -4,6 +4,8 @@ import com.capstone.banking.entity.Users;
 import com.capstone.banking.repository.UserRepository;
 import com.capstone.banking.security.AuthResponse;
 import com.capstone.banking.security.JwtUtil;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
-public class RegistrationController {
+public class AuthenticationController {
 
     @Autowired
     private UserRepository userRepository;
@@ -55,4 +57,7 @@ public class RegistrationController {
 
         return ResponseEntity.ok(new AuthResponse(token));
     }
+    
+    
+
 }

@@ -5,17 +5,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-//import jakarta.persistence.JoinColumn;
-//import jakarta.persistence.ManyToOne;
-//import jakarta.persistence.Table;
+
 
 @Entity
-//@Table(name = "users")
 public class Users 
 {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private Long userId;
 
 	@Column(nullable = false, unique = true)
 	private String username;
@@ -25,22 +22,13 @@ public class Users
     
     @Column(nullable = false)
 	private String role;
-	
-	public Users() {}
 
-	public Users(Long id, String username, String password) {
-		super();
-		this.id = id;
-		this.username = username;
-		this.password = password;
+	public Long getUserId() {
+		return userId;
 	}
 
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public String getUsername() {
@@ -66,4 +54,6 @@ public class Users
 	public void setRole(String role) {
 		this.role = role;
 	}
+	
+	
 }

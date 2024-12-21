@@ -9,4 +9,6 @@ import com.capstone.banking.entity.Users;
 public interface UserRepository extends JpaRepository<Users, Long> 
 {
 	<Optional>Users findByUsername(String username);
+	<Optional>Users findByUserId(Long userId);
+	
 }
