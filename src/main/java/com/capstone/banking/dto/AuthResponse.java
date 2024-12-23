@@ -1,4 +1,4 @@
-package com.capstone.banking.security;
+package com.capstone.banking.dto;
 
 public class AuthResponse 
 {

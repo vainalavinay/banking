@@ -1,4 +1,4 @@
-package com.capstone.banking.controller;
+package com.capstone.banking.dto;
 
 import java.math.BigDecimal;
 

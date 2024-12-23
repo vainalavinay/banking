@@ -26,7 +26,7 @@ public class SecurityConfig{
     }
 
     @Bean
-    public JwtRequestFilter jwtRequestFilter() {
+    JwtRequestFilter jwtRequestFilter() {
         return new JwtRequestFilter(jwtUtil);
     }
 
@@ -37,7 +37,7 @@ public class SecurityConfig{
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/auth/register", "/auth/login").permitAll()
                         .requestMatchers("/admin/**", "/h2-console/**").hasRole("ADMIN")
-                        .requestMatchers("/user/**", "/auth/account").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults())
